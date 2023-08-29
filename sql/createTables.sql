@@ -1,8 +1,9 @@
-DROP TABLE IF EXISTS food;
+DROP TABLE IF EXISTS pasteBin;
 
-CREATE TABLE  food (
+CREATE TABLE  pasteBin (
     id          serial PRIMARY KEY,
-    title       varchar(40) NOT NULL
+    title       varchar(40) NOT NULL,
+    body        text NOT NULL
 );
 
-INSERT INTO food (title) VALUES ('sourdough'), ('olive oil'), ('pizza'), ('picanha'), ('gorgonzola'), ('basil');
+INSERT INTO pasteBin (title,body) VALUES ('Console.log', 'console.log("hello")');
