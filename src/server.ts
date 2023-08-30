@@ -22,7 +22,7 @@ app.get("/", async (_req, res) => {
 
 app.get("/pastes", async (_req, res) => {
     try {
-        const text = "SELECT * FROM pasteBin";
+        const text = "SELECT * FROM pasteBin  ORDER BY (id) DESC LIMIT 10";
         const result = await client.query(text);
         res.status(200).json(result.rows);
     } catch (error) {
