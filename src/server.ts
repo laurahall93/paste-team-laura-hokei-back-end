@@ -30,6 +30,20 @@ app.get("/pastes", async (_req, res) => {
     }
 });
 
+app.post("/pastes/", async (req, res) => {
+    try {
+        const data = req.body;
+        const text =
+            "INSERT INTO pasteBin (title, body) VALUES($1, $2) RETURNING *";
+        const value = [data.title, data.body];
+        const result = await client.query(text, value);
+        res.status(201).json(result.rows);
+        console.log("Data added to DB");
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
 app.get("/health-check", async (_req, res) => {
     try {
         //For this to be successful, must connect to db
