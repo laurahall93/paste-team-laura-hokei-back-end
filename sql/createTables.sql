@@ -7,3 +7,12 @@ CREATE TABLE  pasteBin (
 );
 
 INSERT INTO pasteBin (title,body) VALUES ('Console.log', 'console.log("hello")');
+
+DROP TABLE IF EXISTS commentSubmit;
+
+CREATE TABLE  commentSubmit (
+    id          serial PRIMARY KEY,
+    pasteBinId int,
+    comment        text NOT NULL,
+    FOREIGN KEY (pasteBinId) REFERENCES pasteBin(id),
+);

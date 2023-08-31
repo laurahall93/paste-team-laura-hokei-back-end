@@ -43,6 +43,18 @@ app.get("/pastes/:id", async (req, res) => {
     }
 });
 
+app.get("/pastes/:id/comments", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const text = " SELECT * FROM commentSubmit WHERE pasteBinId = $1";
+        const value = [id];
+        const result = await client.query(text, value);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
 app.post("/pastes/", async (req, res) => {
     try {
         const data = req.body;
