@@ -22,8 +22,21 @@ app.get("/", async (_req, res) => {
 
 app.get("/pastes", async (_req, res) => {
     try {
-        const text = "SELECT * FROM pasteBin  ORDER BY (id) DESC LIMIT 10";
+        const text =
+            "SELECT id,title, LEFT(body,50)AS body FROM pasteBin ORDER BY (id) DESC LIMIT 10";
         const result = await client.query(text);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
+app.get("/pastes/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const text = "SELECT * FROM pasteBin WHERE id = $1";
+        const value = [id];
+        const result = await client.query(text, value);
         res.status(200).json(result.rows);
     } catch (error) {
         console.error({ message: (error as Error).message });
