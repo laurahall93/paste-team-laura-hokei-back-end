@@ -17,7 +17,74 @@ app.use(express.json()); //add JSON body parser to each following route handler
 app.use(cors()); //add CORS support to each following route handler
 
 app.get("/", async (_req, res) => {
-    res.json({ msg: "Hello! There's nothing interesting for GET /" });
+    res.json({
+        msg: "Hello! There's nothing here to GET/ Check out emdpoint /pastes",
+    });
+});
+
+app.get("/pastes", async (_req, res) => {
+    try {
+        const text =
+            "SELECT id,title, LEFT(body,50)AS body FROM pasteBin ORDER BY (id) DESC LIMIT 10";
+        const result = await client.query(text);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
+app.get("/pastes/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const text = "SELECT * FROM pasteBin WHERE id = $1";
+        const value = [id];
+        const result = await client.query(text, value);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
+app.post("/pastes/", async (req, res) => {
+    try {
+        const data = req.body;
+        const text =
+            "INSERT INTO pasteBin (title, body) VALUES($1, $2) RETURNING *";
+        const value = [data.title, data.body];
+        const result = await client.query(text, value);
+        res.status(201).json(result.rows);
+        console.log("Data added to DB");
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
+app.get("/pastes/:id/comments", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const text = " SELECT * FROM commentSubmit WHERE pasteBinId = $1";
+        const value = [id];
+        const result = await client.query(text, value);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
+app.post("/pastes/:id/comments", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const data = req.body;
+        const comment = data.comment;
+        const text =
+            "INSERT INTO commentSubmit (pasteBinId, comment) VALUES ($1,$2) RETURNING *";
+        const value = [id, comment];
+        const result = await client.query(text, value);
+        res.status(201).json(result.rows);
+        console.log("Data(comment) added to DB");
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
 });
 
 app.get("/health-check", async (_req, res) => {
