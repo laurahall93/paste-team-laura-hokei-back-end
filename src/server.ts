@@ -45,6 +45,20 @@ app.get("/pastes/:id", async (req, res) => {
     }
 });
 
+app.post("/pastes/", async (req, res) => {
+    try {
+        const data = req.body;
+        const text =
+            "INSERT INTO pasteBin (title, body) VALUES($1, $2) RETURNING *";
+        const value = [data.title, data.body];
+        const result = await client.query(text, value);
+        res.status(201).json(result.rows);
+        console.log("Data added to DB");
+    } catch (error) {
+        console.error({ message: (error as Error).message });
+    }
+});
+
 app.get("/pastes/:id/comments", async (req, res) => {
     try {
         const id = req.params.id;
@@ -57,15 +71,17 @@ app.get("/pastes/:id/comments", async (req, res) => {
     }
 });
 
-app.post("/pastes/", async (req, res) => {
+app.post("/pastes/:id/comments", async (req, res) => {
     try {
+        const id = req.params.id;
         const data = req.body;
+        const comment = data.comment;
         const text =
-            "INSERT INTO pasteBin (title, body) VALUES($1, $2) RETURNING *";
-        const value = [data.title, data.body];
+            "INSERT INTO commentSubmit (pasteBinId, comment) VALUES ($1,$2) RETURNING *";
+        const value = [id, comment];
         const result = await client.query(text, value);
         res.status(201).json(result.rows);
-        console.log("Data added to DB");
+        console.log("Data(comment) added to DB");
     } catch (error) {
         console.error({ message: (error as Error).message });
     }
